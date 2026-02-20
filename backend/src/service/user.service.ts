@@ -4,14 +4,16 @@ import { CreateUserDTO, UpdateUserDTO } from "../dto/user.dto.js";
 import bcrypt from 'bcrypt';
 
 
+
 export class UserService {
     constructor( private userRepository = new UserRepository()) {}
 
-    async findAll(): Promise<User[]> {
-        return await this.userRepository.find();
+    async findAll(): Promise<Omit<User, "password">[]> {
+        const user = await this.userRepository.find();
+        return user;
     }
 
-    async findUserById(id: string) : Promise<User>{
+    async findUserById(id: string) : Promise<Omit<User, "password"> | null >{
         const user = await this.userRepository.findById(id);
         if(!user) throw new Error(`Usuário não econtrado com o ID: ${id}`);
         return user;
@@ -25,17 +27,26 @@ export class UserService {
     
     async createUser(user: CreateUserDTO): Promise<User> {
         const hashPassword = await bcrypt.hash(user.password, 10);
-        const newUser = await this.userRepository.create({
+        return await this.userRepository.create({
             name: user.name,
             email: user.email,
             password: hashPassword
         });
-        return newUser;
         
     }
 
-    async updateUser(id: string, user: UpdateUserDTO) : Promise<User> {
+    async updateUser(id: string, user: UpdateUserDTO) : Promise<Omit<User, "password">> {
         await this.findUserById(id);
+        if(user.password) {
+            const hashPassword = await bcrypt.hash(user.password, 10);
+            return await this.userRepository.update(id, {
+                name: user.name,
+                email: user.email,
+                password: hashPassword,
+            });
+            
+        }
+        
         return await this.userRepository.update(id, user);
     } 
 

@@ -39,8 +39,8 @@ export class UserController {
                 password: req.body.password,
             }
 
-            const user = await this.userService.createUser(dto);
-            res.status(201).json({message: "Usuário criado com sucesso!", user});
+             await this.userService.createUser(dto);
+            res.status(201).json({message: "Usuário criado com sucesso!"});
             
         } catch (error:any) {
             return res.status(400).json({error: error.message});
@@ -67,7 +67,7 @@ export class UserController {
     async deleteUser(req: Request<UserParams>, res: Response) {
         try {
             await this.userService.deleteUser(req.params.id);
-            return res.status(204).json({message: "Usuário removido com sucesso!"});
+            return res.status(204).send();
             
         } catch (error: any) {
             return res.status(400).json({error: error.message});

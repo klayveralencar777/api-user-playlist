@@ -61,7 +61,7 @@ export class SongController {
     async deleteSong(req: Request<SongParams>, res: Response) {
         try {
             await this.songService.deleteUser(req.params.id, req.user.id);
-            return res.status(204).json({message: `Música removida com sucesso!`});
+            return res.status(204).send();
             
         } catch (error: any) {
             return res.status(400).json({error: error.message});

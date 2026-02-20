@@ -1,5 +1,4 @@
 
-
 export interface SongCreateDTO {
     name: string,
     artist: string,
