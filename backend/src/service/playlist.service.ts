@@ -1,9 +1,8 @@
-import { Playlist } from "@prisma/client";
+import { Playlist, Song } from "@prisma/client";
 import { PlaylistRepository } from "../repository/playlist.repository.js";
 import { CreatePlaylistDTO } from "../dto/playlist.dto.js";
-import { SongService } from "./song.service.js";
 import { SongRepository } from "../repository/song.repository.js";
-import { connect } from "node:http2";
+
 
 
 export class PlaylistService {
@@ -19,18 +18,14 @@ export class PlaylistService {
     }
 
     async createPlaylist(dto: CreatePlaylistDTO, userId: string): Promise<Playlist> {
-        if(!dto.songsId || dto.songsId.length === 0) { 
-            throw new Error(`São necessárias colocar as músicas para criar a playlist.`);
-        }
-        const songDuplicate = new Set(dto.songsId);
-        const songs = Array.from(songDuplicate);
-        
-        const songExists = await this.songRepository.findInList(songs, userId);
 
-       if(songExists.length === 0 || songExists.length !== songs.length) {
-            throw new Error(`Músicas não autorizadas`);
-       }
-       const songsToCreate = songExists.map(s => ({
+        this.validateSongsId(dto.songsId, userId);
+        const songs = this.removeDuplicates(dto.songsId);
+        const foundSongs = await this.songRepository.findInList(songs, userId);
+        this.validateSongsExists(foundSongs, songs);
+
+      
+       const songsToCreate = foundSongs.map(s => ({
             id: s.id
        }));
        
@@ -44,5 +39,26 @@ export class PlaylistService {
                     connect: songsToCreate,
                 } 
        });
-    }  
+    } 
+
+    private validateSongsId(songsId: string[], userId: string) {
+        if(!songsId || songsId.length === 0) { 
+            throw new Error(`São necessárias colocar as músicas para criar a playlist.`);
+        }
+
+    } 
+
+    private removeDuplicates(songsId: string[]){
+        const songDuplicate = new Set(songsId);
+        const result = Array.from(songDuplicate);
+        return result;
+    }
+
+    private validateSongsExists(foundSongs: Song[], songs: string[]) {
+         if(foundSongs.length === 0 || foundSongs.length !== songs.length) {
+            throw new Error(`Músicas não autorizadas`);
+       }
+
+    }
+
 }
