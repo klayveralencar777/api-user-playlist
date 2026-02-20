@@ -3,8 +3,6 @@ import { PlaylistRepository } from "../repository/playlist.repository.js";
 import { CreatePlaylistDTO } from "../dto/playlist.dto.js";
 import { SongRepository } from "../repository/song.repository.js";
 
-
-
 export class PlaylistService {
     constructor( 
         private playlistRepository = new PlaylistRepository(),
@@ -15,6 +13,12 @@ export class PlaylistService {
 
     async findAllPlaylists(userId: string) : Promise<Playlist[]> {
         return await this.playlistRepository.find(userId);
+    }
+
+    async findPlaylistById(id: string, userId: string): Promise<Playlist | null> { 
+        const playlist = await this.playlistRepository.findById(id, userId);
+        if(!playlist) throw new Error(`Playlist não encontrada com o ID: ${id}`);
+        return playlist;
     }
 
     async createPlaylist(dto: CreatePlaylistDTO, userId: string): Promise<Playlist> {

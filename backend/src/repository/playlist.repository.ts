@@ -10,6 +10,11 @@ export class PlaylistRepository {
         });
     }
 
+    async findById(id: string, userId: string) : Promise<Playlist | null> {
+        return await prisma.playlist.findUnique({
+             where: { id, userId}
+        });
+    }
     
     async create(data: Prisma.PlaylistCreateInput) : Promise<Playlist>{
         return await prisma.playlist.create({ data });
