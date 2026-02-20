@@ -36,9 +36,9 @@ export class SongService {
         return await this.songRepository.update(id, dto);
     }
 
-    async deleteUser(id: string, userId: string) {
-        await this.findSongById(id, userId);
-        return await this.songRepository.remove(id, userId);
+    async deleteSong(id: string, userId: string): Promise<void> {
+            await this.findSongById(id, userId);
+            await this.songRepository.remove(id, userId);
     }
 
 }

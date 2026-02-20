@@ -15,6 +15,14 @@ export class SongRepository {
         });
     }
 
+    async findInList(id: string[], userId: string): Promise<Song[]>{
+        return await prisma.song.findMany({
+            where: { 
+                id: { in: id} , userId
+            }
+        });
+    }
+
     async create(data: Prisma.SongCreateInput) : Promise<Song> {
         return await prisma.song.create({  data }); 
     
@@ -27,8 +35,8 @@ export class SongRepository {
         });
     }
 
-    async remove(id: string, userId: string): Promise<Song> {
-        return await prisma.song.delete({ where: { id, userId}});
+    async remove(id: string, userId: string): Promise<void> {
+         await prisma.song.delete({ where: { id, userId}});
     }
 }
 

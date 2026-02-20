@@ -60,7 +60,7 @@ export class SongController {
 
     async deleteSong(req: Request<SongParams>, res: Response) {
         try {
-            await this.songService.deleteUser(req.params.id, req.user.id);
+            await this.songService.deleteSong(req.params.id, req.user.id);
             return res.status(204).send();
             
         } catch (error: any) {

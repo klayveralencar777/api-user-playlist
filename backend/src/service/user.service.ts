@@ -19,7 +19,7 @@ export class UserService {
         return user;
     }
 
-    async findUserByEmail(email: string): Promise<User> {
+    async findUserByEmail(email: string){
         const user = await this.userRepository.findByEmail(email);
         if(!user) throw new Error(`Usuário não encontrado com o Email: ${email}`);
         return user;
@@ -50,8 +50,8 @@ export class UserService {
         return await this.userRepository.update(id, user);
     } 
 
-    async deleteUser(id: string): Promise<User> { 
+    async deleteUser(id: string): Promise<void>{ 
         await this.findUserById(id);
-        return await this.userRepository.remove(id);
+        await this.userRepository.remove(id);
     }
 }

@@ -2,12 +2,13 @@ import { UserService } from "../service/user.service.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { LoginDTO } from "../dto/user.dto.js";
+import { User } from "@prisma/client";
 
 
 export class AuthService {
     constructor(private userService = new UserService()) {}
 
-    async login(data : LoginDTO) {
+    async login(data : LoginDTO){
         const user = await this.userService.findUserByEmail(data.email);
         const checkPassword = await bcrypt.compare(data.password, user.password);
         if(!checkPassword) throw new Error(`Credenciais inválidas`);

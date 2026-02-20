@@ -26,8 +26,12 @@ export class UserRepository {
         });
     }
 
-    async findByEmail(email: string) {
-        return await prisma.user.findFirst({ where: {email}});
+    async findByEmail(email: string){
+        return await prisma.user.findFirst({ 
+            where: {email},
+           
+        
+        });
     }
 
     async create(data: Prisma.UserCreateInput) {
@@ -48,8 +52,8 @@ export class UserRepository {
         })
     }
 
-    async remove(id: string) {
-        return await prisma.user.delete({ where: { id }});
+    async remove(id: string): Promise<void>{
+        await prisma.user.delete({ where: { id }});
     }
 }
 
