@@ -12,7 +12,7 @@ export class PlaylistRepository {
     }
 
     async findById(id: string, userId: string) : Promise<Playlist | null> {
-        return await prisma.playlist.findUnique({
+        return await prisma.playlist.findFirst({
              where: { id, userId},
              include: { songs: true}
         });
@@ -24,9 +24,17 @@ export class PlaylistRepository {
 
     async update(id: string, data: Prisma.PlaylistUpdateInput) : Promise<Playlist> {
         return await prisma.playlist.update({
-            where: { id },
-            data
+            where: { id},
+            data,
+            include: { songs : true},
         });
+    }
+
+    async remove(id: string, userId: string) : Promise<void> {
+        await prisma.playlist.deleteMany({
+            where: { id, userId},
+        })
+        
     }
 
 }

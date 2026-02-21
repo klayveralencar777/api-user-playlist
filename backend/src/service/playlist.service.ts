@@ -71,6 +71,11 @@ export class PlaylistService {
 
     }
 
+    async deletePlaylist(id: string, userId: string) : Promise<void> {
+        await this.findPlaylistById(id, userId);
+        await this.playlistRepository.remove(id, userId);
+    }
+
     private validateSongsId(songsId: string[], userId: string) {
         if(!songsId || songsId.length === 0) { 
             throw new Error(`A lista de músicas está vazia ou não existe.`);

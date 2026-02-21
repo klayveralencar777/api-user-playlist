@@ -36,7 +36,7 @@ export class SongRepository {
     }
 
     async remove(id: string, userId: string): Promise<void> {
-         await prisma.song.delete({ where: { id, userId}});
+         await prisma.song.deleteMany({ where: { id, userId}});
     }
 }
 

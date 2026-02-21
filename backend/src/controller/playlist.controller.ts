@@ -65,7 +65,17 @@ export class PlaylistController {
 
             
         } catch (error: any) {
-            return res.status(401).json({error: error.message});
+            return res.status(400).json({error: error.message});
+            
+        }
+    }
+    async deletePlaylist(req: Request<PlaylistParams>, res: Response) {
+        try {
+            await this.playlistService.deletePlaylist(req.params.id, req.user.id);
+            return res.status(204).send();
+            
+        } catch (error:any) {
+             return res.status(404).json({error: error.message});
             
         }
     }
