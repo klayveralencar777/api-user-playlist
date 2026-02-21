@@ -4,3 +4,9 @@ export interface CreatePlaylistDTO {
     songsId: string[]
 
 }
+
+export interface UpdatePlaylistDTO {
+    name?: string,
+    description?: string,
+    songsId?: string[]
+}

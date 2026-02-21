@@ -7,6 +7,7 @@ router.use(authMiddleware);
 router.get("", playlist.findAllPlaylists.bind(playlist));
 router.get("/:id", playlist.findPlaylistById.bind(playlist));
 router.post("", playlist.createPlaylist.bind(playlist));
+router.put("/:id", playlist.updatePlaylist.bind(playlist));
 
 
 

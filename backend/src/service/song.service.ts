@@ -33,7 +33,13 @@ export class SongService {
 
     async updateSong(id: string, dto: SongUpdateDTO, userId: string): Promise<Song> {
         await this.findSongById(id, userId);
-        return await this.songRepository.update(id, dto);
+        return await this.songRepository.update(id, {
+            name: dto.name,
+            album: dto.album,
+            artist: dto.artist,
+            yearPublish: dto.yearPublish,
+
+        });
     }
 
     async deleteSong(id: string, userId: string): Promise<void> {

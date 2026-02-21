@@ -1,6 +1,6 @@
 import { Playlist, Song } from "@prisma/client";
 import { PlaylistRepository } from "../repository/playlist.repository.js";
-import { CreatePlaylistDTO } from "../dto/playlist.dto.js";
+import { CreatePlaylistDTO, UpdatePlaylistDTO } from "../dto/playlist.dto.js";
 import { SongRepository } from "../repository/song.repository.js";
 
 export class PlaylistService {
@@ -9,7 +9,6 @@ export class PlaylistService {
         private songRepository = new SongRepository()
     
     ) {}
-
 
     async findAllPlaylists(userId: string) : Promise<Playlist[]> {
         return await this.playlistRepository.find(userId);
@@ -43,11 +42,38 @@ export class PlaylistService {
                     connect: songsToCreate,
                 } 
        });
-    } 
+    }
+    
+    async updatePlaylist(id: string, dto: UpdatePlaylistDTO, userId: string) : Promise<Playlist> {
+            await this.findPlaylistById(id, userId);
+            if(dto.songsId) {
+                    this.validateSongsId(dto.songsId, userId);
+                    const songs = this.removeDuplicates(dto.songsId);
+                    const songsFound = await this.songRepository.findInList(songs, userId);
+                    this.validateSongsExists(songsFound, songs);
+                    const songsToUpdate  = songsFound.map(s =>({
+                        id: s.id
+
+                    }));
+                    return await this.playlistRepository.update(id, {
+                        name: dto.name,
+                        description: dto.description,
+                        songs: { set: songsToUpdate},
+                        user: { connect: { id: userId }},                        
+                    });
+            }
+
+            return await this.playlistRepository.update(id, {
+                name: dto.name,
+                description: dto.description
+
+            });
+
+    }
 
     private validateSongsId(songsId: string[], userId: string) {
         if(!songsId || songsId.length === 0) { 
-            throw new Error(`São necessárias colocar as músicas para criar a playlist.`);
+            throw new Error(`A lista de músicas está vazia ou não existe.`);
         }
 
     } 
