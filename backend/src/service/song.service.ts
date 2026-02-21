@@ -1,5 +1,6 @@
 
 import { SongCreateDTO, SongUpdateDTO } from "../dto/song.dto.js";
+import { EntityNotFoundException } from "../exceptions/app.exceptions.js";
 import { SongRepository } from "../repository/song.repository.js";
 import { Song } from "@prisma/client";
 
@@ -13,7 +14,7 @@ export class SongService {
     async findSongById(id: string, userId: string): Promise<Song | null> {
         const song = await this.songRepository.findById(id, userId);
         if(!song) {
-            throw new Error(`Música não encontrada com o ID: ${id}`);
+            throw new EntityNotFoundException(`Música não encontrada com o ID: ${id}`);
         }
         return song;
 

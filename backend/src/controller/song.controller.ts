@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { SongService } from "../service/song.service.js";
 import { SongCreateDTO, SongUpdateDTO } from "../dto/song.dto.js";
 
@@ -9,30 +9,30 @@ interface SongParams {
 export class SongController {
     constructor( private songService = new SongService()) {}
 
-    async findAllSongs(req: Request, res: Response) {
+    async findAllSongs(req: Request, res: Response, next: NextFunction) {
         try {
             const songs = await this.songService.findAllSongs(req.user.id);
             return res.status(200).json(songs);
             
         } catch (error: any) {
-            return res.status(400).json({error: error.message});
+            next(error);
             
         }
     }
 
-    async findSongById(req: Request<SongParams>, res: Response) {
+    async findSongById(req: Request<SongParams>, res: Response, next: NextFunction) {
         try {
             const song = await this.songService.findSongById(req.params.id, req.user.id);
             return res.status(200).json(song);
             
         } catch (error: any) {
-            return res.status(404).json({error: error.message});
+             next(error);
             
         }
     }
 
 
-    async createSong(req: Request, res: Response) {
+    async createSong(req: Request, res: Response, next: NextFunction) {
         
         try {
             const dto : SongCreateDTO = req.body;
@@ -41,11 +41,11 @@ export class SongController {
 
             
         } catch (error: any) {
-            return res.status(400).json({error: error.message});        
+             next(error);        
         }
     }
 
-    async updateSong(req: Request<SongParams>, res: Response) {
+    async updateSong(req: Request<SongParams>, res: Response, next: NextFunction) {
 
         try {
             const dto : SongUpdateDTO = req.body;
@@ -54,17 +54,17 @@ export class SongController {
 
             
         } catch (error: any) {
-            return res.status(400).json({error: error.message});
+             next(error);
         }
     }
 
-    async deleteSong(req: Request<SongParams>, res: Response) {
+    async deleteSong(req: Request<SongParams>, res: Response, next: NextFunction) {
         try {
             await this.songService.deleteSong(req.params.id, req.user.id);
             return res.status(204).send();
             
         } catch (error: any) {
-            return res.status(404).json({error: error.message});
+             next(error);
         }
     }
 

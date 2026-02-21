@@ -2,6 +2,7 @@ import { Playlist, Song } from "@prisma/client";
 import { PlaylistRepository } from "../repository/playlist.repository.js";
 import { CreatePlaylistDTO, UpdatePlaylistDTO } from "../dto/playlist.dto.js";
 import { SongRepository } from "../repository/song.repository.js";
+import { BusinessRuleExcetpion, EntityNotFoundException } from "../exceptions/app.exceptions.js";
 
 export class PlaylistService {
     constructor( 
@@ -16,7 +17,7 @@ export class PlaylistService {
 
     async findPlaylistById(id: string, userId: string): Promise<Playlist | null> { 
         const playlist = await this.playlistRepository.findById(id, userId);
-        if(!playlist) throw new Error(`Playlist não encontrada com o ID: ${id}`);
+        if(!playlist) throw new EntityNotFoundException(`Playlist não encontrada com o ID: ${id}`);
         return playlist;
     }
 
@@ -78,7 +79,7 @@ export class PlaylistService {
 
     private validateSongsId(songsId: string[], userId: string) {
         if(!songsId || songsId.length === 0) { 
-            throw new Error(`A lista de músicas está vazia ou não existe.`);
+            throw new BusinessRuleExcetpion(`A lista de músicas está vazia ou não existe.`);
         }
 
     } 
@@ -91,7 +92,7 @@ export class PlaylistService {
 
     private validateSongsExists(foundSongs: Song[], songs: string[]) {
          if(foundSongs.length === 0 || foundSongs.length !== songs.length) {
-            throw new Error(`Músicas não autorizadas`);
+            throw new BusinessRuleExcetpion(`Músicas não autorizadas`);
        }
 
     }

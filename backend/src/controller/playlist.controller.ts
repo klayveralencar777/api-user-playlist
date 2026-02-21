@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { PlaylistService } from "../service/playlist.service.js";
 import { CreatePlaylistDTO, UpdatePlaylistDTO } from "../dto/playlist.dto.js";
 
@@ -10,31 +10,31 @@ interface PlaylistParams {
 export class PlaylistController {
     constructor( private playlistService = new PlaylistService()) {}
 
-    async findAllPlaylists(req: Request, res: Response) {
+    async findAllPlaylists(req: Request, res: Response, next: NextFunction) {
         try {
             const playlists = await this.playlistService.findAllPlaylists(req.user.id);
             return res.status(200).json(playlists);
             
             
         } catch (error: any) {
-            return res.status(400).json({error: error.message});
+            next(error);
             
         }
     }
 
-    async findPlaylistById(req: Request<PlaylistParams>, res: Response) {
+    async findPlaylistById(req: Request<PlaylistParams>, res: Response, next: NextFunction) {
         try {
             const playlist = await this.playlistService.findPlaylistById(req.params.id, req.user.id);
             return res.status(200).json(playlist);
             
             
         } catch (error: any) {
-            return res.status(404).json({error: error.message});
+            next(error);
             
         }
     }
 
-    async createPlaylist(req: Request, res: Response) {
+    async createPlaylist(req: Request, res: Response, next: NextFunction) {
         try {
             const dto: CreatePlaylistDTO = {
                 name: req.body.name,
@@ -47,12 +47,12 @@ export class PlaylistController {
             return res.status(201).json(playlist);
      
         } catch (error: any) {
-            return res.status(400).json({error: error.message});
+           next(error);
             
         }
     }
 
-    async updatePlaylist(req: Request<PlaylistParams>, res: Response) {
+    async updatePlaylist(req: Request<PlaylistParams>, res: Response, next: NextFunction) {
         try {
             const dto: UpdatePlaylistDTO = {
                 name: req.body.name,
@@ -65,17 +65,17 @@ export class PlaylistController {
 
             
         } catch (error: any) {
-            return res.status(400).json({error: error.message});
+            next(error);
             
         }
     }
-    async deletePlaylist(req: Request<PlaylistParams>, res: Response) {
+    async deletePlaylist(req: Request<PlaylistParams>, res: Response, next: NextFunction) {
         try {
             await this.playlistService.deletePlaylist(req.params.id, req.user.id);
             return res.status(204).send();
             
         } catch (error:any) {
-             return res.status(404).json({error: error.message});
+             next(error);
             
         }
     }
